@@ -1,0 +1,39 @@
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+# Replace 'YOUR_BOT_TOKEN' with the token you obtained from BotFather
+updater = Updater(token=6741118185:AAEJQHk6BZrCiBgCCsBM1CabdC4i-GXDdrU
+, use_context=True)
+
+# Database to store RSVP responses (you might want to use a proper database for production)
+responses = []
+
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Welcome to the Poker Game RSVP Bot!')
+
+def rsvp(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
+    if user_id not in responses:
+        responses.append(user_id)
+        update.message.reply_text('Thank you for RSVPing! 🎉')
+    else:
+        update.message.reply_text('You have already RSVPed.')
+
+def list_responses(update: Update, context: CallbackContext) -> None:
+    response_list = ', '.join(map(str, responses))
+    update.message.reply_text(f'RSVP List: {response_list}')
+
+# Add other functionalities like viewing the list, managing waiting list, etc.
+
+def main() -> None:
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("rsvp", rsvp))
+    dp.add_handler(CommandHandler("list", list_responses))
+
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
